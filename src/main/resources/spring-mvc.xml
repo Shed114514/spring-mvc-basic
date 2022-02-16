@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+        <!--配置注解扫描-->
+        <context:component-scan base-package="com.shed.controller"/>
+
+        <!--配置mvc注解驱动,使用该注解自动配置SpringMVC三大组件之二的处理映射器RequestMappingHandlerMapping和处理适配器RequestMappingHandlerAdapter-->
+        <mvc:annotation-driven conversion-service="converterService"/>
+
+        <!--由于DispatcherServlet的url-pattern设置为/,代表对所有的资源文件进行过滤,以下两种方法指定放行静态资源-->
+<!--        <mvc:resources mapping="/js/**" location="/js/"/>-->
+        <mvc:default-servlet-handler/>
+
+        <!--配置自定义内部资源视图解析器-->
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                <property name="prefix" value="/jsp/"/>
+                <property name="suffix" value=".jsp"/>
+        </bean>
+
+        <!--配置自定义日期格式转换器-->
+        <bean id="converterService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+                <property name="converters">
+                        <list>
+                                <bean class="com.shed.converter.DateConverter"/>
+                        </list>
+                </property>
+        </bean>
+
+        <!--配置文件上传解析器-->
+        <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+                <!--上传文件总大小-->
+                <property name="maxUploadSize" value="5000000"/>
+                <!--上传单个文件的最大上限-->
+                <property name="maxUploadSizePerFile" value="5000000"/>
+                <!--上传的文件编码类型-->
+                <property name="defaultEncoding" value="UTF-8"/>
+        </bean>
+
+        <!--手动配置对象或集合的自动转JSON格式,若配置了<mvc:annotation-driven/>则无需此bean-->
+<!--        <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
+<!--                <property name="messageConverters">-->
+<!--                        <list>-->
+<!--                                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>-->
+<!--                        </list>-->
+<!--                </property>-->
+<!--        </bean>-->
+
+</beans>
